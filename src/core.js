@@ -1,6 +1,6 @@
 'use strict';
 /* ═════════ i2 miniOS — core ═════════ */
-const MINIOS = { name: 'i2 miniOS', short: 'miniOS', version: '1.0', by: 'i2 interactive', url: 'https://i2interactive.com/' };
+const MINIOS = { name: 'i2 miniOS', short: 'miniOS', version: '1.1.1', by: 'i2 interactive', url: 'https://i2interactive.com/' };
 /* where we're running: the kiosk laptop (file:// or ?kiosk) vs. a normal browser tab or an <iframe> on the web */
 const EMBEDDED = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
 const KIOSK = !EMBEDDED && (location.protocol === 'file:' || /(^|[?&#])kiosk(=1|\b)/.test(location.search + location.hash));

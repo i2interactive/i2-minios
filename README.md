@@ -4,6 +4,8 @@ A play-and-learn "operating system" for little kids, in one HTML file. Open it i
 
 By [i2 interactive](https://i2interactive.com/).
 
+![The i2 miniOS start screen](screenshots/01-start.jpg)
+
 ## What it is
 
 - **79 apps**, most with levels that get harder as the child improves:
@@ -23,6 +25,14 @@ By [i2 interactive](https://i2interactive.com/).
   - Claude drawings for Robo Draws, story pictures and Sticker Maker;
   - local image generation through ComfyUI, using a fixed kid-safe template (the child never types a prompt);
   - family voice recordings, family photos and your own background music.
+
+## Screenshots
+
+| | | |
+| --- | --- | --- |
+| ![The home screen with the four hosts](screenshots/02-home.jpg) | ![Bowling, one of the 3D games](screenshots/03-bowling.jpg) | ![The Grown-Ups panel](screenshots/04-grownups.jpg) |
+
+A new child starts with a few apps on the home screen. The rest unlock as they earn stars.
 
 ## Quick start
 

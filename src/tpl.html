@@ -853,6 +853,11 @@ body.discoMode #bg{animation:discoBg .5s steps(1) infinite}
 .boot-logo img{max-width:60vmin;max-height:24vmin;display:block}
 .boot-logo.mark{color:var(--tt-white);line-height:0}.boot-logo .i2mark{display:block;width:min(25vmin,46vw);height:auto;overflow:visible}
 #boot{overflow:auto}.boot-inner{padding:2vmin 0;margin:auto}
+.bootGrown{margin:2vmin auto 0;max-width:min(88vw,70vmin);font-family:var(--px);font-size:clamp(10px,1.6vmin,15px);line-height:1.5;letter-spacing:.06em;color:var(--tt-dim);text-align:center;opacity:0;animation:bootIn .3s 1.8s forwards}
+@media (hover:none){.bootGrown .kbOnly{display:none}}
+@media (min-aspect-ratio:4/3){.bootGrown{position:fixed;left:3vmin;bottom:3vmin;margin:0;max-width:min(30vw,52vmin);text-align:left}}
+/* the grown-up hold on Hoot: after a moment a ring fills, so a grown-up can tell it is working */
+.castMember.holding::after{content:"";position:absolute;inset:-.6vmin;border-radius:50%;background:conic-gradient(var(--tt-yellow) calc(var(--hp,0) * 1turn),transparent 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - .8vmin),#000 calc(100% - .8vmin));mask:radial-gradient(farthest-side,transparent calc(100% - .8vmin),#000 calc(100% - .8vmin));pointer-events:none}
 .bootBy{margin-top:2.2vmin;font-family:var(--px);font-size:clamp(11px,1.9vmin,18px);letter-spacing:.12em;color:var(--tt-dim);opacity:0;animation:bootIn .3s 1.8s forwards}
 #bootFirst{margin-top:1.8vmin;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--px);font-size:clamp(11px,1.8vmin,16px);color:var(--tt-dim);letter-spacing:.06em}
 #bootFirst input{width:min(60vw,38vmin);font-family:var(--px);font-size:clamp(16px,3vmin,28px);text-align:center;background:#000;color:var(--tt-white);border:2px solid var(--tt-line2);padding:.6vmin 1vmin}
@@ -984,6 +989,7 @@ body[data-wall="sunset"] #desk,.wallPrev[data-wall="sunset"]{background:linear-g
     <div class="boot-log" id="bootLog"></div>
     <button class="slab" id="bootGo">▶ PLAY</button>
     <label id="bootFirst" style="display:none">GROWN-UPS: CHILD'S NAME (OPTIONAL)<input id="bootName" maxlength="24" placeholder="Friend" autocomplete="off" spellcheck="false"></label>
+    <div class="bootGrown" id="bootGrown">GROWN-UPS: SETTINGS LIVE BEHIND HOOT THE OWL.<br>ON THE HOME SCREEN, PRESS AND HOLD HOOT FOR 3 SECONDS<span class="kbOnly"> (OR PRESS CTRL+SHIFT+O)</span>.</div>
     <div class="bootBy">by i2 interactive</div>
   </div>
 </div>

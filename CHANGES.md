@@ -1,5 +1,12 @@
 # Changes
 
+## i2 miniOS 1.1.1 (2026-11-25)
+
+### Grown-ups
+- The start screen now tells grown-ups how to open settings: press and hold Hoot the owl on the home screen for 3 seconds (or press Ctrl+Shift+O on a keyboard).
+- While you hold Hoot, a yellow ring fills around the owl after the first moment, so you can tell it is working. A quick tap is still just a tap.
+- The version number now reads 1.1.1 on the start screen and in Grown-Ups (it still said 1.0 in 1.1).
+
 ## i2 miniOS 1.1 (2026-11-16)
 
 ### Names

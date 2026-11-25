@@ -83,7 +83,7 @@ const closeStart = () => toggleStart(false);
 $('#startBtn').addEventListener('click', () => toggleStart());
 $('#scrim').addEventListener('click', closeStart);
 function holdButton(el, ms, fn) { let t = null; el.addEventListener('pointerdown', () => { el.classList.add('holding'); t = setTimeout(() => { el.classList.remove('holding'); fn(); }, ms); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => { clearTimeout(t); el.classList.remove('holding'); })); }
-/* grown-up gate: long-press Hoot on the desktop (no visible cue), then a times-table question */
+/* grown-up gate: long-press Hoot on the desktop (a ring fills after 0.8 s; the boot screen tells grown-ups how), then a times-table question */
 function grownUpGate(onPass) {
   const o = $('#gate'), a = randi(6, 9), b = randi(6, 9); let typed = '', t = null;
   const close = () => { o.classList.remove('show'); clearTimeout(t); };
@@ -97,9 +97,12 @@ function grownUpGate(onPass) {
   o.classList.add('show'); t = setTimeout(close, 20000);
 }
 function secretHold(el, ms, fn) {
-  let t = null; el._skipClick = false;
-  el.addEventListener('pointerdown', () => { clearTimeout(t); t = setTimeout(() => { el._skipClick = true; fn(); }, ms); });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => clearTimeout(t)));
+  let t = null, raf = 0, t0 = 0; el._skipClick = false;
+  // Nov 25: after 0.8 s a ring starts filling round the button (no cue before that, so a quick tap stays a plain tap)
+  const stop = () => { clearTimeout(t); cancelAnimationFrame(raf); el.classList.remove('holding'); el.style.removeProperty('--hp'); };
+  const ring = () => { const p = (performance.now() - t0 - 800) / (ms - 800); if (p > 0) { el.classList.add('holding'); el.style.setProperty('--hp', Math.min(1, p).toFixed(3)); } if (p < 1) raf = requestAnimationFrame(ring); };
+  el.addEventListener('pointerdown', () => { stop(); t0 = performance.now(); raf = requestAnimationFrame(ring); t = setTimeout(() => { stop(); el._skipClick = true; fn(); }, ms); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, stop));
   el.addEventListener('click', e => { if (el._skipClick) { el._skipClick = false; e.stopImmediatePropagation(); } }, true);
 }
 

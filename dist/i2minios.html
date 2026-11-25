@@ -856,6 +856,11 @@ body.discoMode #bg{animation:discoBg .5s steps(1) infinite}
 .boot-logo img{max-width:60vmin;max-height:24vmin;display:block}
 .boot-logo.mark{color:var(--tt-white);line-height:0}.boot-logo .i2mark{display:block;width:min(25vmin,46vw);height:auto;overflow:visible}
 #boot{overflow:auto}.boot-inner{padding:2vmin 0;margin:auto}
+.bootGrown{margin:2vmin auto 0;max-width:min(88vw,70vmin);font-family:var(--px);font-size:clamp(10px,1.6vmin,15px);line-height:1.5;letter-spacing:.06em;color:var(--tt-dim);text-align:center;opacity:0;animation:bootIn .3s 1.8s forwards}
+@media (hover:none){.bootGrown .kbOnly{display:none}}
+@media (min-aspect-ratio:4/3){.bootGrown{position:fixed;left:3vmin;bottom:3vmin;margin:0;max-width:min(30vw,52vmin);text-align:left}}
+/* the grown-up hold on Hoot: after a moment a ring fills, so a grown-up can tell it is working */
+.castMember.holding::after{content:"";position:absolute;inset:-.6vmin;border-radius:50%;background:conic-gradient(var(--tt-yellow) calc(var(--hp,0) * 1turn),transparent 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - .8vmin),#000 calc(100% - .8vmin));mask:radial-gradient(farthest-side,transparent calc(100% - .8vmin),#000 calc(100% - .8vmin));pointer-events:none}
 .bootBy{margin-top:2.2vmin;font-family:var(--px);font-size:clamp(11px,1.9vmin,18px);letter-spacing:.12em;color:var(--tt-dim);opacity:0;animation:bootIn .3s 1.8s forwards}
 #bootFirst{margin-top:1.8vmin;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--px);font-size:clamp(11px,1.8vmin,16px);color:var(--tt-dim);letter-spacing:.06em}
 #bootFirst input{width:min(60vw,38vmin);font-family:var(--px);font-size:clamp(16px,3vmin,28px);text-align:center;background:#000;color:var(--tt-white);border:2px solid var(--tt-line2);padding:.6vmin 1vmin}
@@ -987,6 +992,7 @@ body[data-wall="sunset"] #desk,.wallPrev[data-wall="sunset"]{background:linear-g
     <div class="boot-log" id="bootLog"></div>
     <button class="slab" id="bootGo">▶ PLAY</button>
     <label id="bootFirst" style="display:none">GROWN-UPS: CHILD'S NAME (OPTIONAL)<input id="bootName" maxlength="24" placeholder="Friend" autocomplete="off" spellcheck="false"></label>
+    <div class="bootGrown" id="bootGrown">GROWN-UPS: SETTINGS LIVE BEHIND HOOT THE OWL.<br>ON THE HOME SCREEN, PRESS AND HOLD HOOT FOR 3 SECONDS<span class="kbOnly"> (OR PRESS CTRL+SHIFT+O)</span>.</div>
     <div class="bootBy">by i2 interactive</div>
   </div>
 </div>
@@ -1181,7 +1187,7 @@ body[data-wall="sunset"] #desk,.wallPrev[data-wall="sunset"]{background:linear-g
 <script>
 'use strict';
 /* ═════════ i2 miniOS — core ═════════ */
-const MINIOS = { name: 'i2 miniOS', short: 'miniOS', version: '1.0', by: 'i2 interactive', url: 'https://i2interactive.com/' };
+const MINIOS = { name: 'i2 miniOS', short: 'miniOS', version: '1.1.1', by: 'i2 interactive', url: 'https://i2interactive.com/' };
 /* where we're running: the kiosk laptop (file:// or ?kiosk) vs. a normal browser tab or an <iframe> on the web */
 const EMBEDDED = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
 const KIOSK = !EMBEDDED && (location.protocol === 'file:' || /(^|[?&#])kiosk(=1|\b)/.test(location.search + location.hash));
@@ -6932,7 +6938,7 @@ const closeStart = () => toggleStart(false);
 $('#startBtn').addEventListener('click', () => toggleStart());
 $('#scrim').addEventListener('click', closeStart);
 function holdButton(el, ms, fn) { let t = null; el.addEventListener('pointerdown', () => { el.classList.add('holding'); t = setTimeout(() => { el.classList.remove('holding'); fn(); }, ms); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => { clearTimeout(t); el.classList.remove('holding'); })); }
-/* grown-up gate: long-press Hoot on the desktop (no visible cue), then a times-table question */
+/* grown-up gate: long-press Hoot on the desktop (a ring fills after 0.8 s; the boot screen tells grown-ups how), then a times-table question */
 function grownUpGate(onPass) {
   const o = $('#gate'), a = randi(6, 9), b = randi(6, 9); let typed = '', t = null;
   const close = () => { o.classList.remove('show'); clearTimeout(t); };
@@ -6946,9 +6952,12 @@ function grownUpGate(onPass) {
   o.classList.add('show'); t = setTimeout(close, 20000);
 }
 function secretHold(el, ms, fn) {
-  let t = null; el._skipClick = false;
-  el.addEventListener('pointerdown', () => { clearTimeout(t); t = setTimeout(() => { el._skipClick = true; fn(); }, ms); });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => clearTimeout(t)));
+  let t = null, raf = 0, t0 = 0; el._skipClick = false;
+  // Nov 25: after 0.8 s a ring starts filling round the button (no cue before that, so a quick tap stays a plain tap)
+  const stop = () => { clearTimeout(t); cancelAnimationFrame(raf); el.classList.remove('holding'); el.style.removeProperty('--hp'); };
+  const ring = () => { const p = (performance.now() - t0 - 800) / (ms - 800); if (p > 0) { el.classList.add('holding'); el.style.setProperty('--hp', Math.min(1, p).toFixed(3)); } if (p < 1) raf = requestAnimationFrame(ring); };
+  el.addEventListener('pointerdown', () => { stop(); t0 = performance.now(); raf = requestAnimationFrame(ring); t = setTimeout(() => { stop(); el._skipClick = true; fn(); }, ms); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, stop));
   el.addEventListener('click', e => { if (el._skipClick) { el._skipClick = false; e.stopImmediatePropagation(); } }, true);
 }
 
